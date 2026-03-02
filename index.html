@@ -3,250 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HofBuch Cloud 2026</title>
+    <title>HofBuch Cloud Live</title>
     <style>
-        :root { --green: #2d6a4f; --dark: #1b4332; --light: #f4f7f6; --accent: #d4a373; --red: #e63946; }
-        body, html { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: var(--light); color: #333; height: 100%; }
-        
-        /* LOGIN */
-        .login-screen { height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--green), var(--dark)); position: fixed; z-index: 9999; }
-        .login-box { background: white; padding: 40px; border-radius: 15px; width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-primary { background: var(--green); color: white; }
-        .btn-danger { background: var(--red); color: white; }
-
-        /* APP LAYOUT */
-        #app { display: none; flex-direction: column; min-height: 100vh; }
-        .header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
-        .content { flex: 1; padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        .section { display: none; animation: fadeIn 0.3s; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* DASHBOARD KACHELN */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
-        .card-menu { background: white; padding: 25px; border-radius: 12px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--green); }
-        .card-menu:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
-        .status-sync { font-size: 11px; color: #888; text-align: right; margin-top: 5px; }
+        :root { --green: #2d6a4f; --dark: #1b4332; --light: #f4f7f6; --red: #e63946; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; }
+        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--dark); }
+        .login-box { background: white; padding: 30px; border-radius: 12px; width: 300px; text-align: center; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-p { background: var(--green); color: white; }
+        #app { display: none; }
+        .header { background: var(--dark); color: white; padding: 15px; display: flex; justify-content: space-between; }
+        .card { background: white; padding: 15px; margin: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .admin-only { display: none; }
+        .loader { font-size: 12px; color: orange; display: none; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay" class="login-screen">
         <div class="login-box">
-            <h1 style="margin:0;">🚜 HofBuch</h1>
-            <p>Cloud Anmeldung</p>
-            <input type="text" id="login-user" placeholder="Benutzername">
-            <input type="password" id="login-pass" placeholder="Passwort">
-            <button class="btn btn-primary" onclick="handleLogin()">Einloggen</button>
-            <p id="login-msg" style="color:red; font-size:12px; display:none; margin-top:10px;">Fehler!</p>
-            <p style="font-size:10px; color:#999; margin-top:15px;">Erster Admin: admin / hof2026</p>
+            <h2>🚜 HofBuch Login</h2>
+            <input type="text" id="l-u" placeholder="Name">
+            <input type="password" id="l-p" placeholder="Passwort">
+            <button class="btn btn-p" onclick="login()">Anmelden</button>
+            <p id="msg" style="color:red;"></p>
         </div>
     </div>
 
     <div id="app">
         <div class="header">
-            <div onclick="go('home')" style="cursor:pointer; font-weight:bold;">🚜 HofBuch <span id="role-tag" style="font-size:10px; opacity:0.7;"></span></div>
-            <button onclick="location.reload()" style="background:transparent; border:1px solid white; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;">Logout</button>
+            <span>🚜 HofBuch Cloud</span>
+            <span id="sync-icon" class="loader">☁️ Sync...</span>
+            <button onclick="location.reload()">Logout</button>
         </div>
 
-        <div class="content">
-            <div id="sync-status" class="status-sync">Daten aktuell...</div>
+        <div class="card admin-only">
+            <h3>Mitarbeiter anlegen (Admin)</h3>
+            <input type="text" id="new-u" placeholder="Name des Erntehelfers">
+            <input type="password" id="new-p" placeholder="Passwort">
+            <select id="new-r">
+                <option value="worker">Erntehelfer / Mitarbeiter</option>
+                <option value="admin">Administrator</option>
+            </select>
+            <button class="btn btn-p" onclick="addUser()">Account erstellen</button>
+        </div>
 
-            <div id="home" class="section active">
-                <h2 id="welcome-msg">Hallo!</h2>
-                <div class="grid">
-                    <div class="card-menu admin-only" onclick="go('fleet')"><i>🚜</i><h3>Fuhrpark</h3></div>
-                    <div class="card-menu admin-only" onclick="go('inv')"><i>📦</i><h3>Lager</h3></div>
-                    <div class="card-menu admin-only" onclick="go('staff')"><i>👥</i><h3>Personal</h3></div>
-                    <div class="card-menu" onclick="go('tasks')"><i>🛠️</i><h3>Aufgaben</h3></div>
-                    <div class="card-menu" onclick="go('orders')"><i>🛒</i><h3>Ersatzteile</h3></div>
-                </div>
+        <div class="card">
+            <h3>Aktuelle Aufgaben & Wartungen</h3>
+            <div id="task-list">Lade Daten...</div>
+            <div class="admin-only">
+                <hr>
+                <input type="text" id="t-m" placeholder="Maschine">
+                <input type="text" id="t-d" placeholder="Aufgabe">
+                <button class="btn btn-p" onclick="addTask()">Zuweisen</button>
             </div>
+        </div>
 
-            <div id="staff" class="section">
-                <button class="btn" style="width:auto; margin-bottom:10px;" onclick="go('home')">← Zurück</button>
-                <h2>Mitarbeiter-Accounts</h2>
-                <div class="card">
-                    <h3>Neuen Account erstellen</h3>
-                    <input type="text" id="new-u" placeholder="Name">
-                    <input type="password" id="new-p" placeholder="Passwort">
-                    <select id="new-r">
-                        <option value="worker">Mitarbeiter (nur Aufgaben)</option>
-                        <option value="admin">Administrator (Vollzugriff)</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="createAccount()">Account anlegen</button>
-                </div>
-                <div class="card">
-                    <table>
-                        <thead><tr><th>Name</th><th>Rolle</th><th>Aktion</th></tr></thead>
-                        <tbody id="staff-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="tasks" class="section">
-                <button class="btn" style="width:auto; margin-bottom:10px;" onclick="go('home')">← Zurück</button>
-                <h2>Wartungsaufgaben</h2>
-                <div class="card admin-only">
-                    <h3>Neue Aufgabe zuweisen</h3>
-                    <input type="text" id="task-v" placeholder="Maschine">
-                    <input type="text" id="task-d" placeholder="Was ist zu tun?">
-                    <button class="btn btn-primary" onclick="addTask()">Auftrag senden</button>
-                </div>
-                <div id="task-list-display"></div>
-            </div>
-
-            <div id="orders" class="section">
-                <button class="btn" style="width:auto; margin-bottom:10px;" onclick="go('home')">← Zurück</button>
-                <h2>Ersatzteil-Bestellliste</h2>
-                <div id="order-list-display"></div>
-            </div>
-
-            <div id="fleet" class="section"><h1>Maschinen</h1><div class="card" id="f-display"></div><button class="btn" onclick="go('home')">Zurück</button></div>
-            <div id="inv" class="section"><h1>Lagerbestand</h1><div class="card" id="i-display"></div><button class="btn" onclick="go('home')">Zurück</button></div>
-
+        <div class="card">
+            <h3>Ersatzteile / Bestellliste</h3>
+            <input type="text" id="o-i" placeholder="Was wird benötigt?">
+            <button class="btn btn-p" style="background:orange" onclick="addOrder()">Teil anfordern</button>
+            <div id="order-list" style="margin-top:10px;"></div>
         </div>
     </div>
 
     <script>
-        // --- CLOUD CONFIGURATION ---
-        // Dies ist ein öffentlicher Speicher-Key für Testzwecke. 
-        // Für echte Sicherheit sollte man später eine private API nutzen.
-        const DB_URL = "https://api.jsonbin.io/v3/b/65e1f893dc746540188b4888"; // TEST-BIN
-        const API_KEY = "$2a$10$Your_Optional_API_Key"; // Hier könnte man Sicherheit einbauen
+        // HIER DEINE ID VON NPOINT EINTRAGEN:
+        const BIN_ID = "https://www.npoint.io/docs/ee2e847bca4c396d9025"; 
+        const API_URL = `https://api.npoint.io/${BIN_ID}`;
 
-        let state = {
-            users: [{u:"admin", p:"hof2026", r:"admin"}],
-            fleet: [],
-            inv: [],
-            tasks: [],
-            orders: []
-        };
-
+        let db = { users: [], tasks: [], orders: [], fleet: [] };
         let currentUser = null;
 
-        // --- AUTH & SYNC ---
-        async function loadData() {
-            document.getElementById('sync-status').innerText = "Lade Cloud-Daten...";
-            // In dieser Demo nutzen wir LocalStorage als Fallback, 
-            // um es einfach zu halten. Für echte Cloud-Synchronisation 
-            // müsste hier ein fetch() Aufruf stehen.
-            const saved = localStorage.getItem('hof_cloud_db');
-            if(saved) state = JSON.parse(saved);
+        async function loadDB() {
+            document.getElementById('sync-icon').style.display = "inline";
+            const res = await fetch(API_URL);
+            db = await res.json();
+            document.getElementById('sync-icon').style.display = "none";
             render();
-            document.getElementById('sync-status').innerText = "Daten synchronisiert.";
         }
 
-        function saveData() {
-            localStorage.setItem('hof_cloud_db', JSON.stringify(state));
-            document.getElementById('sync-status').innerText = "Speichere...";
-            setTimeout(() => { document.getElementById('sync-status').innerText = "In Cloud gesichert."; render(); }, 500);
+        async function saveDB() {
+            document.getElementById('sync-icon').style.display = "inline";
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(db)
+            });
+            document.getElementById('sync-icon').style.display = "none";
+            render();
         }
 
-        function handleLogin() {
-            const u = document.getElementById('login-user').value;
-            const p = document.getElementById('login-pass').value;
-            const user = state.users.find(x => x.u === u && x.p === p);
-
+        async function login() {
+            await loadDB();
+            const u = document.getElementById('l-u').value;
+            const p = document.getElementById('l-p').value;
+            const user = db.users.find(x => x.u === u && x.p === p);
+            
             if(user) {
                 currentUser = user;
                 document.getElementById('login-overlay').style.display = "none";
-                document.getElementById('app').style.display = "flex";
-                document.getElementById('welcome-msg').innerText = "Hallo, " + user.u;
-                document.getElementById('role-tag').innerText = "[" + user.r.toUpperCase() + "]";
-                
-                if(user.r !== "admin") {
-                    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+                document.getElementById('app').style.display = "block";
+                if(user.r === 'admin') {
+                    document.querySelectorAll('.admin-only').forEach(e => e.style.display = "block");
                 }
-                loadData();
             } else {
-                const msg = document.getElementById('login-msg');
-                msg.style.display = "block";
-                msg.innerText = "Benutzer oder Passwort falsch!";
+                document.getElementById('msg').innerText = "Falsche Zugangsdaten!";
             }
         }
 
-        // --- ADMIN FUNKTIONEN ---
-        function createAccount() {
+        function addUser() {
             const u = document.getElementById('new-u').value;
             const p = document.getElementById('new-p').value;
             const r = document.getElementById('new-r').value;
             if(u && p) {
-                state.users.push({u, p, r});
-                saveData();
-                document.getElementById('new-u').value = "";
-                document.getElementById('new-p').value = "";
+                db.users.push({u, p, r});
+                saveDB();
+                alert("Mitarbeiter " + u + " kann sich jetzt einloggen!");
             }
-        }
-
-        function removeUser(i) {
-            if(state.users[i].u === "admin") return alert("Master-Admin kann nicht gelöscht werden!");
-            state.users.splice(i, 1);
-            saveData();
         }
 
         function addTask() {
-            const v = document.getElementById('task-v').value;
-            const d = document.getElementById('task-d').value;
-            if(v && d) {
-                state.tasks.push({v, d, status: "offen", from: currentUser.u});
-                saveData();
-                document.getElementById('task-v').value = "";
-                document.getElementById('task-d').value = "";
-            }
+            const v = document.getElementById('t-m').value;
+            const d = document.getElementById('t-d').value;
+            if(v && d) { db.tasks.push({v, d}); saveDB(); }
         }
 
-        function requestPart(taskIdx) {
-            const part = prompt("Welches Ersatzteil wird benötigt?");
-            if(part) {
-                state.orders.push({item: part, for: state.tasks[taskIdx].v, user: currentUser.u});
-                saveData();
-            }
-        }
-
-        // --- NAVIGATION & RENDERING ---
-        function go(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        function addOrder() {
+            const i = document.getElementById('o-i').value;
+            if(i) { db.orders.push({i, u: currentUser.u}); saveDB(); }
         }
 
         function render() {
-            // Personal Liste
-            const sl = document.getElementById('staff-list');
-            sl.innerHTML = "";
-            state.users.forEach((user, i) => {
-                sl.innerHTML += `<tr><td>${user.u}</td><td>${user.r}</td><td><button class="btn btn-danger" style="padding:4px;" onclick="removeUser(${i})">X</button></td></tr>`;
-            });
+            const tl = document.getElementById('task-list');
+            tl.innerHTML = db.tasks.map((t, i) => `
+                <div style="border-bottom:1px solid #eee; padding:5px;">
+                    <b>${t.v}</b>: ${t.d} 
+                    <button onclick="db.tasks.splice(${i},1);saveDB()" style="float:right">✓</button>
+                </div>
+            `).join('');
 
-            // Aufgaben Liste
-            const tl = document.getElementById('task-list-display');
-            tl.innerHTML = "";
-            state.tasks.forEach((t, i) => {
-                tl.innerHTML += `<div class="card">
-                    <h4>${t.v}</h4><p>${t.d}</p>
-                    <button class="btn btn-primary" style="width:auto; margin-right:10px;" onclick="state.tasks.splice(${i},1);saveData()">Erledigt</button>
-                    <button class="btn" style="width:auto; background:#f39c12; color:white;" onclick="requestPart(${i})">Teil fehlt</button>
-                </div>`;
-            });
-
-            // Bestell Liste
-            const ol = document.getElementById('order-list-display');
-            ol.innerHTML = state.orders.length ? "" : "Keine Bestellungen.";
-            state.orders.forEach((o, i) => {
-                ol.innerHTML += `<div class="card"><b>${o.item}</b> für ${o.for} <br><small>Gemeldet von: ${o.user}</small> 
-                    ${currentUser.r === 'admin' ? `<button class="btn btn-danger" style="width:auto; float:right; padding:5px;" onclick="state.orders.splice(${i},1);saveData()">Geliefert</button>` : ''}
-                </div>`;
-            });
+            const ol = document.getElementById('order-list');
+            ol.innerHTML = db.orders.map((o, i) => `
+                <div style="font-size:13px;">• ${o.i} (von ${o.u}) 
+                ${currentUser.r === 'admin' ? `<button onclick="db.orders.splice(${i},1);saveDB()">X</button>` : ''}
+                </div>
+            `).join('');
         }
-
-        window.onload = loadData;
     </script>
 </body>
 </html>
-
