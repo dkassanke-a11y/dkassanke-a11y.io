@@ -3,249 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HofBuch OS - LS25 Final</title>
+    <title>HofBuch Pro-X 2026</title>
     <style>
-        :root { --ls-bg: #050505; --ls-card: #11141a; --ls-green: #5eb82d; --ls-accent: #fbc02d; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--ls-bg); margin: 0; color: var(--text); }
+        :root {
+            --bg: #0a0b0d; --card: #16191f; --text: #ffffff; --text-dim: #8a8d91;
+            --primary: #5eb82d; --accent: #fbc02d; --danger: #ff4d4d; --nav: #000000;
+        }
+        [data-theme="light"] {
+            --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; --text-dim: #65676b;
+            --primary: #2d6a4f; --accent: #d4a373; --danger: #dc3545; --nav: #ffffff;
+        }
+
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
         
-        /* LOGIN - UNBLOCKIERBAR */
-        #login-overlay { height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; background: #000; position: fixed; z-index: 9999; }
-        .login-box { background: var(--ls-card); padding: 40px; border-radius: 2px; width: 280px; border-bottom: 4px solid var(--ls-green); text-align: center; }
+        /* LOGIN */
+        #login-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: var(--card); padding: 40px; border-radius: 12px; width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         
-        header { background: #000; padding: 15px 25px; border-bottom: 2px solid var(--ls-green); display: flex; justify-content: space-between; align-items: center; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        /* LAYOUT */
+        header { background: var(--nav); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 25px; }
         
-        /* LS25 SHOP CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .ls-card { background: var(--ls-card); border: 1px solid #222; position: relative; transition: 0.2s; }
-        .ls-card:hover { border-color: var(--ls-green); }
-        .ls-img { width: 100%; height: 180px; background: #000; object-fit: contain; }
-        .ls-info { padding: 15px; }
-        .ls-title { font-size: 1.3rem; font-weight: 900; font-style: italic; text-transform: uppercase; margin: 0; }
-        .ls-stats { background: #050505; padding: 10px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; }
+        /* CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid rgba(128,128,128,0.1); transition: 0.3s; position: relative; }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .card-img { width: 100%; height: 200px; object-fit: contain; background: #000; }
+        .card-body { padding: 20px; }
         
         /* DASHBOARD */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-        .kachel { background: var(--ls-card); padding: 30px 10px; text-align: center; cursor: pointer; border: 1px solid #333; font-weight: bold; }
-        .kachel:hover { background: var(--ls-green); color: #000; }
-        
-        input, textarea { background: #1a1e24; border: 1px solid #333; color: #fff; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        .btn { background: var(--ls-green); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
-        .btn-sm { padding: 6px 12px; background: #222; color: #fff; border: none; cursor: pointer; font-size: 11px; margin-right: 5px; }
-        .btn-sm:hover { background: var(--ls-green); color: #000; }
-        
-        .section { display: none; }
-        .active { display: block; }
-        .admin-panel { border: 1px solid var(--ls-accent); padding: 15px; margin-bottom: 20px; background: rgba(251, 192, 45, 0.05); }
-    </style>
-</head>
-<body>
-
-    <div id="login-overlay">
-        <div class="login-box">
-            <h1 style="color: var(--ls-green); font-style: italic; margin-bottom: 25px;">HOFBUCH OS</h1>
-            <input type="text" id="l-u" placeholder="BENUTZER">
-            <input type="password" id="l-p" placeholder="PASSWORT">
-            <button class="btn" id="login-trigger">LOGIN</button>
-            <p id="err" style="color: var(--ls-accent); font-size: 11px; margin-top: 10px;"></p>
-        </div>
-    </div>
-
-    <div id="app" style="display:none;">
-        <header>
-            <div onclick="go('dash')" style="cursor:pointer; font-weight:900; font-style:italic;">🚜 HOFBUCH <span id="sync-info" style="font-size:10px; font-style:normal; margin-left:10px;"></span></div>
-            <button onclick="location.reload()" style="background:none; border:1px solid #333; color:#fff; cursor:pointer;">LOGOUT</button>
-        </header>
-
-        <div class="container">
-            <div id="dash" class="section active">
-                <h2 style="font-style:italic; border-left:4px solid var(--ls-green); padding-left:10px;">DASHBOARD</h2>
-                <div class="dash-grid">
-                    <div id="k-tasks" class="kachel" onclick="go('tasks')">AUFGABEN</div>
-                    <div id="k-orders" class="kachel" onclick="go('orders')">SHOP</div>
-                    <div id="k-fleet" class="kachel" onclick="go('fleet')">FUHRPARK</div>
-                    <div id="k-staff" class="kachel" onclick="go('staff')">TEAM</div>
-                </div>
-            </div>
-
-            <div id="fleet" class="section">
-                <button class="btn-sm" onclick="go('dash')">← ZURÜCK</button>
-                <div id="fleet-admin" class="admin-panel" style="display:none; margin-top:15px;">
-                    <h3>NEUE MASCHINE</h3>
-                    <input type="text" id="fn" placeholder="Name">
-                    <input type="text" id="fi" placeholder="Kennzeichen">
-                    <input type="text" id="fh" placeholder="Stunden">
-                    <input type="text" id="fimg" placeholder="Bild-URL">
-                    <button class="btn" onclick="addF()">SPEICHERN</button>
-                </div>
-                <div class="grid" id="fleet-list" style="margin-top:20px;"></div>
-            </div>
-
-            <div id="tasks" class="section">
-                <button class="btn-sm" onclick="go('dash')">← ZURÜCK</button>
-                <div id="task-admin" class="admin-panel" style="display:none; margin-top:15px;">
-                    <h3>NEUE AUFGABE</h3>
-                    <input type="text" id="tm" placeholder="Was / Wo">
-                    <input type="text" id="td" placeholder="Details">
-                    <button class="btn" onclick="addT()">ERSTELLEN</button>
-                </div>
-                <div id="task-list" style="margin-top:20px;"></div>
-            </div>
-
-            <div id="staff" class="section">
-                <button class="btn-sm" onclick="go('dash')">← ZURÜCK</button>
-                <div class="admin-panel" style="margin-top:15px;">
-                    <h3>TEAM VERWALTEN</h3>
-                    <input type="text" id="nu" placeholder="Name">
-                    <input type="password" id="np" placeholder="Passwort">
-                    <button class="btn" onclick="addU()">NUTZER ANLEGEN</button>
-                </div>
-                <div id="staff-list"></div>
-            </div>
-
-            <div id="orders" class="section">
-                <button class="btn-sm" onclick="go('dash')">← ZURÜCK</button>
-                <div class="admin-panel" style="margin-top:15px;">
-                    <h3>SHOPLISTE</h3>
-                    <input type="text" id="oi" placeholder="Teil">
-                    <button class="btn" onclick="addO()">HINZUFÜGEN</button>
-                </div>
-                <div id="order-list"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const API = "https://api.npoint.io/ee2e847bca4c396d9025";
-        let db = { users: [], tasks: [], orders: [], fleet: [] };
-        let currentUser = null;
-
-        // DER UNKAPUTTBARE LOGIN-LISTENER
-        document.getElementById('login-trigger').addEventListener('click', function() {
-            const u = document.getElementById('l-u').value;
-            const p = document.getElementById('l-p').value;
-            const err = document.getElementById('err');
-
-            // 1. Sofort-Check für Admin (Kein Warten auf Cloud!)
-            if (u === "admin" && p === "hof2026") {
-                currentUser = { u: "CHEF", perms: ['tasks','orders','fleet','admin'] };
-                startApp();
-            } else {
-                // Nur wenn nicht Admin, dann Cloud fragen
-                err.innerText = "VERBINDE...";
-                fetch(API).then(r => r.json()).then(data => {
-                    db = data;
-                    const found = db.users.find(x => x.u === u && x.p === p);
-                    if (found) {
-                        currentUser = found;
-                        startApp();
-                    } else {
-                        err.innerText = "ZUGANG VERWEIGERT";
-                    }
-                }).catch(() => {
-                    err.innerText = "CLOUD-FEHLER (Nur Admin-Login möglich)";
-                });
-            }
-        });
-
-        function startApp() {
-            document.getElementById('login-overlay').style.display = "none";
-            document.getElementById('app').style.display = "block";
-            
-            // Berechtigungen setzen
-            const p = currentUser.perms || [];
-            document.getElementById('k-tasks').style.display = p.includes('tasks') ? "block" : "none";
-            document.getElementById('k-orders').style.display = p.includes('orders') ? "block" : "none";
-            document.getElementById('k-fleet').style.display = p.includes('fleet') ? "block" : "none";
-            document.getElementById('k-staff').style.display = p.includes('admin') ? "block" : "none";
-            
-            if (p.includes('admin')) {
-                document.getElementById('fleet-admin').style.display = "block";
-                document.getElementById('task-admin').style.display = "block";
-            }
-            
-            // Erst jetzt im Hintergrund die Cloud laden
-            sync();
-        }
-
-        async function sync(save = false) {
-            const info = document.getElementById('sync-info');
-            info.innerText = "⌛";
-            try {
-                if (save) {
-                    await fetch(API, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db) });
-                } else {
-                    const r = await fetch(API);
-                    const d = await r.json();
-                    if (d) db = d;
-                }
-                info.innerText = "ONLINE";
-                render();
-            } catch (e) {
-                info.innerText = "OFFLINE";
-            }
-        }
-
-        function go(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        // AKTIONEN
-        function addF() {
-            if(!db.fleet) db.fleet = [];
-            db.fleet.push({ n: document.getElementById('fn').value, id: document.getElementById('fi').value, h: document.getElementById('fh').value, img: document.getElementById('fimg').value });
-            sync(true);
-        }
-        function addT() {
-            if(!db.tasks) db.tasks = [];
-            db.tasks.push({ m: document.getElementById('tm').value, d: document.getElementById('td').value, by: currentUser.u });
-            sync(true);
-        }
-        function addU() {
-            if(!db.users) db.users = [];
-            db.users.push({ u: document.getElementById('nu').value, p: document.getElementById('np').value, perms: ['tasks','orders','fleet'] });
-            sync(true);
-        }
-        function addO() {
-            if(!db.orders) db.orders = [];
-            db.orders.push({ i: document.getElementById('oi').value, u: currentUser.u });
-            sync(true);
-        }
-
-        function render() {
-            const fl = document.getElementById('fleet-list');
-            fl.innerHTML = (db.fleet || []).map((f, i) => `
-                <div class="ls-card">
-                    <img src="${f.img || 'https://via.placeholder.com/400x200/111/5eb82d?text=MASCHINE'}" class="ls-img">
-                    <div class="ls-info">
-                        <div style="color:var(--ls-green); font-size:10px; font-weight:bold;">EQUIPMENT</div>
-                        <h3 class="ls-title">${f.n}</h3>
-                        <div class="ls-stats">
-                            <span style="color:#666">ID</span> <span>${f.id}</span>
-                            <span style="color:#666">HOURS</span> <span>${f.h} h</span>
-                        </div>
-                        <button class="btn-sm" style="margin-top:10px;" onclick="const h=prompt('NEUE STUNDEN:'); if(h){db.fleet[${i}].h=h;sync(true);}">UPDATE</button>
-                        ${currentUser.perms.includes('admin') ? `<button class="btn-sm" style="background:red" onclick="db.fleet.splice(${i},1);sync(true)">DELETE</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-
-            document.getElementById('task-list').innerHTML = (db.tasks || []).map((t, i) => `
-                <div class="ls-card" style="padding:15px; margin-bottom:10px; border-left:4px solid var(--ls-green)">
-                    <b>${t.m}</b>: ${t.d} <br><small>VON: ${t.by}</small>
-                    <button class="btn-sm" style="float:right" onclick="db.tasks.splice(${i},1);sync(true)">FERTIG</button>
-                </div>
-            `).join('');
-
-            document.getElementById('order-list').innerHTML = (db.orders || []).map((o, i) => `
-                <div class="ls-card" style="padding:10px; margin-bottom:5px;">${o.i} <button class="btn-sm" style="float:right" onclick="db.orders.splice(${i},1);sync(true)">✓</button></div>
-            `).join('');
-
-            document.getElementById('staff-list').innerHTML = (db.users || []).map((u, i) => `
-                <div style="padding:10px; background:#1a1e24; margin-bottom:5px;">${u.u} <button class="btn-sm" style="float:right" onclick="db.users.splice(${i},1);sync(true)">LÖSCHEN</button></div>
-            `).join('');
-        }
-    </script>
-</body>
-</html>
+        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .kachel { background: var(--card); padding: 40px 20px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: bold; border: 1px solid rgba(128,128,128,0
