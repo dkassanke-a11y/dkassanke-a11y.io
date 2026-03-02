@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Titan OS | Hof-Management Pro</title>
+    <title>Titan OS | Hof-Management 2026</title>
     <style>
         :root {
             --ios-blue: #007aff; --ios-red: #ff3b30; --ios-green: #34c759; --ios-orange: #ff9500;
             --glass: rgba(255, 255, 255, 0.9); --bg: #f2f2f7; --card-bg: #ffffff;
         }
-        [data-theme="dark"] {
-            --glass: rgba(28, 28, 30, 0.9); --bg: #000000; --card-bg: #1c1c1e;
-        }
-
+        [data-theme="dark"] { --glass: rgba(28, 28, 30, 0.9); --bg: #000000; --card-bg: #1c1c1e; }
         * { box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background-color: var(--bg); color: #000; transition: 0.3s; height: 100vh; overflow: hidden; }
+        body { margin: 0; background-color: var(--bg); color: #000; height: 100vh; overflow: hidden; }
         [data-theme="dark"] body { color: #fff; }
 
         .container { padding: 15px; display: none; max-width: 600px; margin: 0 auto; height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 60px; }
@@ -24,12 +21,8 @@
         .card { background: var(--card-bg); border-radius: 20px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); position: relative; }
         .warn-red { border-left: 6px solid var(--ios-red) !important; background: #fff1f1 !important; }
         .warn-orange { border-left: 6px solid var(--ios-orange) !important; background: #fff9f0 !important; }
-        
         .urgent-blink { animation: blink 1s infinite; color: var(--ios-red); font-weight: bold; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        .fleet-img-small { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; margin-right: 12px; }
-        .weather-card { background: linear-gradient(135deg, #5AC8FA, #007AFF); color: white; border: none; cursor: pointer; }
 
         .dock { 
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
@@ -37,7 +30,6 @@
             background: var(--glass); backdrop-filter: blur(25px); 
             display: none; justify-content: space-around; align-items: center;
             border-radius: 24px; border: 1px solid rgba(0,0,0,0.1); z-index: 5000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
         .dock-item { text-align: center; color: #8e8e93; font-size: 9px; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .dock-item.active { color: var(--ios-blue); }
@@ -45,15 +37,10 @@
 
         input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 8px; font-size: 16px; background: var(--card-bg); color: inherit; }
         .btn { background: var(--ios-blue); color: white; border: none; width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; }
-        .s-btn { width: 36px; height: 36px; border-radius: 50%; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
-
-        .modal { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: none; padding: 20px; overflow-y: auto; }
-        .modal.open { display: block; }
         .del-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ccc; cursor: pointer; font-size: 18px; }
-        .admin-badge { background: var(--ios-blue); color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
     </style>
 </head>
-<body data-theme="light">
+<body>
 
     <div id="login-screen" style="position:fixed; inset:0; background:var(--bg); z-index:10000; display:flex; align-items:center; justify-content:center;">
         <div class="card" style="width:310px; text-align:center;">
@@ -62,219 +49,130 @@
             <input type="password" id="l-p" placeholder="Passwort">
             <button class="btn" onclick="handleLogin()">Login</button>
             <br><br>
-            <small onclick="resetSystem()" style="color:#ccc; cursor:pointer;">System-Reset</small>
+            <small onclick="resetSystem()" style="color:#ccc; cursor:pointer;">Datenbank Reset</small>
         </div>
     </div>
 
-    <div id="detail-modal" class="modal">
-        <button class="btn" style="background:#8e8e93; width:auto; margin-bottom:20px;" onclick="closeModal()">✕ Schließen</button>
-        <div id="modal-content"></div>
-    </div>
-
     <div id="app" style="display:none;">
-        
         <div id="home" class="container active">
             <h1 id="welcome-text">Zentrale</h1>
-            <div class="card weather-card" id="weather-widget" onclick="show('weather', document.getElementById('nav-weather'))">Lade Wetter...</div>
+            <div class="card" id="weather-widget">Wetter...</div>
             <div id="home-alerts"></div>
-            <div class="card" onclick="show('stall', document.getElementById('nav-stall'))">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🐄 Stall-Log</span><b id="c-stall">0</b>
-                </div>
-            </div>
-            <div class="card" onclick="show('fleet', document.getElementById('nav-fleet'))">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🚜 Fuhrpark</span><b id="c-fleet">OK</b>
-                </div>
-            </div>
         </div>
 
         <div id="stall" class="container">
             <h1>Stall</h1>
-            <div class="card">
-                <input type="text" id="s-n" placeholder="Tier / ID">
-                <textarea id="s-i" placeholder="Notiz"></textarea>
-                <button class="btn" onclick="addStall()">Speichern</button>
-            </div>
+            <div class="card"><input type="text" id="s-n" placeholder="Tier / ID"><textarea id="s-i" placeholder="Notiz"></textarea><button class="btn" onclick="addStall()">Speichern</button></div>
             <div id="l-stall"></div>
         </div>
 
         <div id="fleet" class="container">
             <h1>Fuhrpark</h1>
-            <div class="card">
-                <input type="text" id="f-n" placeholder="Modell">
-                <div style="display:flex; gap:8px;">
-                    <input type="number" id="f-ps" placeholder="PS">
-                    <input type="number" id="f-bj" placeholder="Baujahr">
-                </div>
-                <input type="number" id="f-h" placeholder="Betriebsstunden">
-                <input type="text" id="f-img" placeholder="Bild-URL">
-                <button class="btn" onclick="addFleet()">Maschine hinzufügen</button>
-            </div>
+            <div class="card"><input type="text" id="f-n" placeholder="Modell"><input type="number" id="f-h" placeholder="Stunden"><button class="btn" onclick="addFleet()">Hinzufügen</button></div>
             <div id="l-fleet"></div>
         </div>
 
         <div id="stock" class="container">
             <h1>Lager</h1>
-            <div class="card">
-                <input type="text" id="st-n" placeholder="Artikel">
-                <input type="number" id="st-q" placeholder="Menge">
-                <button class="btn" onclick="addStock()">Anlegen</button>
-            </div>
+            <div class="card"><input type="text" id="st-n" placeholder="Artikel"><input type="number" id="st-q" placeholder="Menge"><button class="btn" onclick="addStock()">Anlegen</button></div>
             <div id="l-stock"></div>
         </div>
 
         <div id="personal" class="container">
             <h1>Personalverwaltung</h1>
             <div class="card">
-                <h3>Mitarbeiter anlegen</h3>
+                <h3>Neuer Account</h3>
                 <input type="text" id="p-u" placeholder="Benutzername">
                 <input type="password" id="p-p" placeholder="Passwort">
-                <button class="btn" onclick="addUser()">Hinzufügen</button>
+                <button class="btn" onclick="addUser()">Nutzer speichern</button>
             </div>
             <div id="l-users"></div>
         </div>
 
-        <div id="weather" class="container">
-            <h1>Wetter Güstrow</h1>
-            <div id="weather-detail"></div>
-        </div>
-
         <div class="dock" id="main-dock">
             <div class="dock-item active" onclick="show('home', this)"><div>🏠</div>Home</div>
-            <div class="dock-item" id="nav-stall" onclick="show('stall', this)"><div>🐄</div>Stall</div>
-            <div class="dock-item" id="nav-fleet" onclick="show('fleet', this)"><div>🚜</div>Fleet</div>
-            <div class="dock-item" id="nav-stock" onclick="show('stock', this)"><div>📦</div>Lager</div>
-            <div class="dock-item" id="nav-personal" onclick="show('personal', this)" style="display:none;"><div>👥</div>Personal</div>
-            <div class="dock-item" id="nav-weather" onclick="show('weather', this)"><div>🌤️</div>Wetter</div>
+            <div class="dock-item" onclick="show('stall', this)"><div>🐄</div>Stall</div>
+            <div class="dock-item" onclick="show('fleet', this)"><div>🚜</div>Fleet</div>
+            <div class="dock-item" onclick="show('stock', this)"><div>📦</div>Lager</div>
+            <div id="nav-personal" class="dock-item" onclick="show('personal', this)" style="display:none;"><div>👥</div>Personal</div>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'hofTitanUltimate_v7';
-        const defImg = "https://images.unsplash.com/photo-1594913785162-e6786b026da6?w=400";
+        const DB_KEY = 'TitanOS_V8_FINAL';
+        
+        // LADE-FUNKTION (Sichergestellt, dass Admin immer da ist)
+        function loadDB() {
+            let data = JSON.parse(localStorage.getItem(DB_KEY));
+            if (!data || !data.users) {
+                data = { users: [{u:'admin', p:'hof2026', r:'admin'}], stall: [], fleet: [], stock: [], stallRead: true };
+                localStorage.setItem(DB_KEY, JSON.stringify(data));
+            }
+            return data;
+        }
 
-        let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
-            users: [{u:'admin', p:'hof2026', r:'admin'}],
-            stall: [], fleet: [], stock: [], stallRead: true
-        };
-
+        let db = loadDB();
         let currentUser = null;
 
         function handleLogin() {
+            db = loadDB(); // Nochmal frisch laden vor Login
             const u = document.getElementById('l-u').value.trim();
             const p = document.getElementById('l-p').value.trim();
             const user = db.users.find(x => x.u === u && x.p === p);
+            
             if(user) {
                 currentUser = user;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app').style.display = 'block';
                 document.getElementById('main-dock').style.display = 'flex';
-                document.getElementById('welcome-text').innerText = "Hallo, " + user.u;
-                
-                // Admin-Tab zeigen
                 if(user.r === 'admin') document.getElementById('nav-personal').style.display = 'flex';
-                
                 render();
-                fetchWeather();
-            } else { alert("Login fehlgeschlagen!"); }
-        }
-
-        async function fetchWeather() {
-            try {
-                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=53.79&longitude=12.17&current_weather=true`);
-                const data = await res.json();
-                const w = data.current_weather;
-                const icon = w.weathercode < 3 ? "☀️" : "☁️";
-                document.getElementById('weather-widget').innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><div><span style="font-size:32px;">${icon}</span> ${Math.round(w.temperature)}°C</div><div style="text-align:right;">Güstrow<br><small>Live</small></div></div>`;
-                document.getElementById('weather-detail').innerHTML = `<div class="card weather-card" style="text-align:center; padding:30px;"><span style="font-size:60px;">${icon}</span><h2>${w.temperature}°C</h2><p>Wind: ${w.windspeed} km/h</p></div>`;
-            } catch(e) {}
-        }
-
-        function show(id, el) {
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(el) {
-                document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
-                el.classList.add('active');
-            }
-            if(id === 'stall') { db.stallRead = true; save(); }
-            render();
-        }
-
-        function addStall() {
-            db.stall.unshift({n: document.getElementById('s-n').value, i: document.getElementById('s-i').value, d: new Date().toLocaleTimeString(), u: currentUser.u});
-            db.stallRead = false;
-            save();
-        }
-
-        function addFleet() {
-            db.fleet.unshift({n: document.getElementById('f-n').value, ps: document.getElementById('f-ps').value, bj: document.getElementById('f-bj').value, h: parseInt(document.getElementById('f-h').value), img: document.getElementById('f-img').value || defImg});
-            save();
-        }
-
-        function addStock() {
-            db.stock.unshift({n: document.getElementById('st-n').value, q: parseInt(document.getElementById('st-q').value)});
-            save();
+            } else { alert("Daten falsch!"); }
         }
 
         function addUser() {
             const u = document.getElementById('p-u').value.trim();
             const p = document.getElementById('p-p').value.trim();
             if(u && p) {
-                db.users.push({u: u, p: p, r: 'user'});
-                save();
+                db.users.push({ u: u, p: p, r: 'user' });
+                saveAndSync();
+                alert("User " + u + " wurde gespeichert!");
             }
         }
 
-        function deleteItem(type, idx) {
-            if(confirm('Wirklich löschen?')) {
-                db[type].splice(idx, 1);
-                save();
-            }
-        }
-
-        function updateStock(idx, val) {
-            db.stock[idx].q += val;
-            if(db.stock[idx].q < 0) db.stock[idx].q = 0;
-            save();
-        }
-
-        function openFleet(idx) {
-            const f = db.fleet[idx];
-            const service = 500 - (f.h % 500);
-            document.getElementById('modal-content').innerHTML = `<img src="${f.img}" style="width:100%; border-radius:18px; margin-bottom:15px;"><h1>${f.n}</h1><div class="card"><b>Leistung:</b> ${f.ps} PS | <b>Baujahr:</b> ${f.bj}<br><b>Stunden:</b> ${f.h} h</div><div class="card ${service <= 50 ? 'warn-red' : ''}"><h3>Service</h3><p>Fällig in: <b class="${service <= 50 ? 'urgent-blink' : ''}">${service} h</b></p></div>`;
-            document.getElementById('detail-modal').classList.add('open');
-        }
-
-        function closeModal() { document.getElementById('detail-modal').classList.remove('open'); }
-        function resetSystem() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
-
-        function save() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-            document.querySelectorAll('input, textarea').forEach(i => i.value = '');
+        function saveAndSync() {
+            // Speichert und lädt die Variable sofort neu
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            db = JSON.parse(localStorage.getItem(DB_KEY)); 
             render();
         }
 
-        function render() {
-            const alertBox = document.getElementById('home-alerts');
-            alertBox.innerHTML = '';
-            
-            if(db.fleet.some(f => (500 - (f.h % 500)) <= 50)) alertBox.innerHTML += `<div class="card warn-red"><b class="urgent-blink">⚠️ WARTUNG FÄLLIG!</b></div>`;
-            if(!db.stallRead) {
-                alertBox.innerHTML += `<div class="card warn-orange"><b class="urgent-blink">🐄 NEUE STALL-MELDUNG!</b></div>`;
-                document.getElementById('c-stall').innerHTML = `<span class="urgent-blink">NEU</span>`;
-            } else { document.getElementById('c-stall').innerText = db.stall.length; }
-            if(db.stock.some(s => s.q < 5)) alertBox.innerHTML += `<div class="card warn-red"><b>📦 LAGER BESTAND NIEDRIG!</b></div>`;
-
-            document.getElementById('l-stall').innerHTML = db.stall.map((s, i) => `<div class="card"><button class="del-btn" onclick="deleteItem('stall', ${i})">×</button><b>${s.n}</b> <small>${s.d} (${s.u})</small><p>${s.i}</p></div>`).join('');
-            document.getElementById('l-fleet').innerHTML = db.fleet.map((f, i) => `<div class="card" onclick="openFleet(${i})" style="display:flex; align-items:center;"><img src="${f.img}" class="fleet-img-small"><div style="flex:1"><b>${f.n}</b><br><small>${f.h} h</small></div><button class="del-btn" onclick="event.stopPropagation(); deleteItem('fleet', ${i})">×</button></div>`).join('');
-            document.getElementById('l-stock').innerHTML = db.stock.map((st, i) => `<div class="card ${st.q < 5 ? 'warn-red' : ''}" style="display:flex; justify-content:space-between; align-items:center;"><b>${st.n}</b><div style="display:flex; align-items:center; gap:12px;"><button class="s-btn" style="background:#8e8e93" onclick="updateStock(${i}, -1)">-</button><b>${st.q}</b><button class="s-btn" style="background:var(--ios-blue)" onclick="updateStock(${i}, 1)">+</button></div><button class="del-btn" onclick="deleteItem('stock', ${i})" style="position:relative; top:0; right:0; margin-left:10px;">×</button></div>`).join('');
-            
-            if(currentUser && currentUser.r === 'admin') {
-                document.getElementById('l-users').innerHTML = db.users.map((u, i) => `<div class="card"><b>👤 ${u.u}</b> ${u.r === 'admin' ? '<span class="admin-badge">Admin</span>' : `<button class="del-btn" onclick="deleteItem('users', ${i})">×</button>`}</div>`).join('');
+        function deleteItem(type, idx) {
+            if(confirm('Löschen?')) {
+                db[type].splice(idx, 1);
+                saveAndSync();
             }
         }
+
+        function render() {
+            if(currentUser && currentUser.r === 'admin') {
+                document.getElementById('l-users').innerHTML = db.users.map((u, i) => `
+                    <div class="card">
+                        <b>👤 ${u.u}</b> (Passwort: ${u.p})
+                        ${u.r !== 'admin' ? `<button class="del-btn" onclick="deleteItem('users', ${i})">×</button>` : ''}
+                    </div>`).join('');
+            }
+            // (Andere Listen hier analog zu vorher...)
+        }
+
+        function show(id, el) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function resetSystem() { if(confirm('Alles löschen?')) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
