@@ -6,70 +6,71 @@
     <title>HofBuch OS - LS25 Edition</title>
     <style>
         :root { 
-            --ls-dark: #121417; --ls-card: #1c1f26; --ls-green: #5eb82d; 
-            --ls-accent: #fbc02d; --text: #ffffff; --text-dim: #a0a0a0;
+            --ls-dark: #0a0b0d; --ls-card: #16191f; --ls-green: #5eb82d; 
+            --ls-accent: #fbc02d; --text: #ffffff; --text-dim: #8a8d91;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--ls-dark); margin: 0; color: var(--text); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--ls-dark); margin: 0; color: var(--text); overflow-x: hidden; }
         
-        /* LOGIN */
-        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #2c3e50, #121417); position: fixed; width:100%; z-index:2000; }
-        .login-box { background: var(--ls-card); padding: 40px; border-radius: 10px; width: 320px; text-align: center; border-top: 4px solid var(--ls-green); }
+        /* LOGIN SCREEN */
+        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #1c1f26 0%, #0a0b0d 100%); position: fixed; width:100%; z-index:2000; }
+        .login-box { background: var(--ls-card); padding: 40px; border-radius: 4px; width: 300px; text-align: center; border-bottom: 4px solid var(--ls-green); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         
-        header { background: #000; padding: 15px 25px; display: flex; justify-content: space-between; border-bottom: 2px solid var(--ls-green); }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        header { background: #000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ls-green); position: sticky; top: 0; z-index: 1000; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
         /* LS25 SHOP GRID */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         
-        /* FAHRZEUG KARTE (SHOP LOOK) */
-        .ls-card { background: var(--ls-card); border-radius: 5px; overflow: hidden; position: relative; transition: 0.2s; border: 1px solid #333; }
-        .ls-card:hover { border-color: var(--ls-green); transform: translateY(-3px); }
-        .ls-img { width: 100%; height: 180px; background: #2a2e38; object-fit: cover; border-bottom: 2px solid var(--ls-green); }
-        .ls-content { padding: 15px; }
-        .ls-title { font-size: 1.2rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .ls-brand { color: var(--ls-green); font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
+        .ls-card { background: var(--ls-card); border-radius: 2px; overflow: hidden; border: 1px solid #2a2e38; transition: 0.2s; }
+        .ls-card:hover { border-color: var(--ls-green); }
+        .ls-img-container { width: 100%; height: 180px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .ls-img { width: 100%; height: 100%; object-fit: contain; }
+        .ls-content { padding: 15px; border-top: 1px solid #2a2e38; }
         
-        .ls-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #121417; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 13px; }
+        .ls-brand { color: var(--ls-green); font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .ls-title { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; font-style: italic; margin-bottom: 10px; }
+        
+        .ls-stats { background: #0a0b0d; padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px; border-radius: 2px; }
         .stat-label { color: var(--text-dim); }
         
-        /* DASHBOARD KACHELN */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-        .kachel { background: var(--ls-card); padding: 30px 10px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #333; display: none; }
-        .kachel:hover { background: var(--ls-green); color: black; }
-        .kachel i { font-size: 40px; display: block; margin-bottom: 10px; }
+        /* DASHBOARD */
+        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; }
+        .kachel { background: var(--ls-card); padding: 30px 10px; text-align: center; cursor: pointer; border: 1px solid #2a2e38; font-weight: bold; transition: 0.2s; display: none; }
+        .kachel:hover { background: var(--ls-green); color: #000; }
+        .kachel i { font-size: 35px; display: block; margin-bottom: 10px; font-style: normal; }
 
-        /* INPUTS */
-        input, textarea { background: #2a2e38; border: 1px solid #444; color: white; padding: 12px; border-radius: 4px; width: 100%; box-sizing: border-box; margin: 5px 0; }
-        .btn { background: var(--ls-green); color: black; border: none; padding: 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-mini { padding: 5px 10px; font-size: 11px; width: auto; background: var(--ls-accent); margin-right: 5px; }
+        input, textarea { background: #1c1f26; border: 1px solid #333; color: white; padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        input:focus { border-color: var(--ls-green); outline: none; }
+        .btn { background: var(--ls-green); color: #000; border: none; padding: 15px; font-weight: 900; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
+        .btn-small { padding: 6px 12px; font-size: 11px; width: auto; margin-right: 5px; background: #333; color: white; }
         
         .section { display: none; }
         .active { display: block; }
-        .admin-only { border: 1px dashed var(--ls-accent); padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .admin-panel { border: 1px solid var(--ls-accent); padding: 15px; margin-bottom: 25px; background: rgba(251, 192, 45, 0.05); }
     </style>
 </head>
 <body>
 
     <div id="login-overlay" class="login-screen">
         <div class="login-box">
-            <h1 style="color: var(--ls-green); letter-spacing: 2px;">HOFBUCH OS</h1>
-            <p style="color: var(--text-dim);">ENTER SYSTEM</p>
-            <input type="text" id="l-u" placeholder="USER">
-            <input type="password" id="l-p" placeholder="PASSWORD">
-            <button class="btn" onclick="login()">LOGIN</button>
-            <p id="msg" style="color:red;"></p>
+            <h1 style="color: var(--ls-green); font-style: italic; margin:0;">HOFBUCH OS</h1>
+            <p style="color: var(--text-dim); font-size: 10px; letter-spacing: 2px; margin-bottom: 20px;">VERSION 2026.1</p>
+            <input type="text" id="l-u" placeholder="BENUTZER">
+            <input type="password" id="l-p" placeholder="PASSWORT">
+            <button class="btn" onclick="login()">STARTEN</button>
+            <p id="msg" style="color:var(--ls-accent); font-size: 11px; margin-top: 10px;"></p>
         </div>
     </div>
 
     <div id="app" style="display:none;">
         <header>
-            <div onclick="go('dash')" style="cursor:pointer; font-weight:bold;">🚜 HOFBUCH <span id="sync-info" style="color:var(--ls-green); font-size:10px;"></span></div>
-            <button onclick="location.reload()" style="background:none; border:1px solid #444; color:white; padding:4px 10px; border-radius:4px; cursor:pointer;">EXIT</button>
+            <div onclick="go('dash')" style="cursor:pointer; font-weight:bold; letter-spacing:1px;">🚜 HOFBUCH OS <span id="sync-status" style="color:var(--ls-green); font-size:10px; margin-left:10px;"></span></div>
+            <button onclick="location.reload()" style="background:none; border:1px solid #333; color:white; padding:5px 15px; cursor:pointer; font-size:11px;">BEENDEN</button>
         </header>
 
         <div class="container">
             <div id="dash" class="section active">
-                <h2 id="welcome">DASHBOARD</h2>
+                <h2 style="font-style: italic; border-left: 4px solid var(--ls-green); padding-left: 15px;">HAUPTMENÜ</h2>
                 <div class="dash-grid">
                     <div id="k-tasks" class="kachel" onclick="go('tasks')"><i>🛠️</i>AUFGABEN</div>
                     <div id="k-orders" class="kachel" onclick="go('orders')"><i>🛒</i>SHOP</div>
@@ -79,58 +80,57 @@
             </div>
 
             <div id="fleet" class="section">
-                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
-                
-                <div id="fleet-admin" class="admin-only" style="display:none;">
-                    <h3 style="color:var(--ls-accent);">MASCHINE HINZUFÜGEN</h3>
-                    <input type="text" id="f-n" placeholder="Name (z.B. Fendt 724 Vario)">
+                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
+                <div id="fleet-admin" class="admin-panel" style="display:none;">
+                    <h4 style="color:var(--ls-accent); margin-top:0;">NEUES FAHRZEUG REGISTRIEREN</h4>
+                    <input type="text" id="f-n" placeholder="Bezeichnung (z.B. CLAAS LEXION 8900)">
                     <input type="text" id="f-id" placeholder="Kennzeichen">
-                    <input type="text" id="f-h" placeholder="Stunden">
-                    <input type="text" id="f-img" placeholder="Bild-URL (Link zum Bild)">
-                    <textarea id="f-w" placeholder="Wartungs-Informationen"></textarea>
+                    <input type="text" id="f-h" placeholder="Betriebsstunden">
+                    <input type="text" id="f-img" placeholder="Bild-URL (Link)">
+                    <textarea id="f-w" placeholder="Wartungsplan / Notizen"></textarea>
                     <button class="btn" onclick="addFleet()">SPEICHERN</button>
                 </div>
-
-                <div class="grid" id="fleet-list"></div>
+                <div class="grid" id="fleet-display"></div>
             </div>
 
             <div id="tasks" class="section">
-                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
-                <div id="task-admin" class="admin-only" style="display:none;">
-                    <h3>NEUER AUFTRAG</h3>
-                    <input type="text" id="t-m" placeholder="Maschine/Bereich">
-                    <input type="text" id="t-d" placeholder="Beschreibung">
-                    <button class="btn" onclick="addTask()">ZOWEISEN</button>
+                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
+                <div id="task-admin" class="admin-panel" style="display:none;">
+                    <h4 style="color:var(--ls-accent); margin-top:0;">AUFTRAG ERSTELLEN</h4>
+                    <input type="text" id="t-m" placeholder="Maschine / Ort">
+                    <input type="text" id="t-d" placeholder="Was ist zu tun?">
+                    <button class="btn" onclick="addTask()">SENDEN</button>
                 </div>
-                <div id="task-list"></div>
-            </div>
-
-            <div id="orders" class="section">
-                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
-                <div class="admin-only">
-                    <h3>BESTELLLISTE</h3>
-                    <input type="text" id="o-i" placeholder="Teil/Produkt">
-                    <button class="btn" onclick="addOrder()">MELDEN</button>
-                </div>
-                <div id="order-list"></div>
+                <div id="task-display"></div>
             </div>
 
             <div id="staff" class="section">
-                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
-                <div class="admin-only">
-                    <h3>PERSONALVERWALTUNG</h3>
+                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
+                <div class="admin-panel">
+                    <h4>MITARBEITER VERWALTEN</h4>
                     <input type="text" id="n-u" placeholder="Name">
                     <input type="password" id="n-p" placeholder="Passwort">
-                    <div style="font-size:12px; margin:10px 0;">
-                        <label><input type="checkbox" id="p-tasks" checked> AUFGABEN</label>
-                        <label><input type="checkbox" id="p-orders" checked> SHOP</label>
-                        <label><input type="checkbox" id="p-fleet" checked> FUHRPARK</label>
+                    <div style="font-size:12px; margin: 10px 0;">
+                        <label><input type="checkbox" id="p-tasks" checked> AUFGABEN</label> |
+                        <label><input type="checkbox" id="p-orders" checked> SHOP</label> |
+                        <label><input type="checkbox" id="p-fleet" checked> FUHRPARK</label> |
                         <label><input type="checkbox" id="p-admin"> ADMIN</label>
                     </div>
-                    <button class="btn" onclick="addUser()">NUTZER ERSTELLEN</button>
+                    <button class="btn" onclick="addUser()">NUTZER ANLEGEN</button>
                 </div>
-                <div id="staff-list"></div>
+                <div id="staff-display"></div>
             </div>
+
+            <div id="orders" class="section">
+                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
+                <div class="admin-panel">
+                    <h4>BESTELLLISTE</h4>
+                    <input type="text" id="o-i" placeholder="Teil oder Produkt">
+                    <button class="btn" onclick="addOrder()">AUF LISTE SETZEN</button>
+                </div>
+                <div id="order-display"></div>
+            </div>
+
         </div>
     </div>
 
@@ -139,22 +139,45 @@
         let db = { users: [], tasks: [], orders: [], fleet: [] };
         let currentUser = null;
 
-        async function sync(save = false) {
-            document.getElementById('sync-info').innerText = "•";
-            try {
-                if(save) {
-                    await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db) });
-                } else {
-                    const res = await fetch(API_URL);
-                    db = await res.json();
-                }
-                document.getElementById('sync-info').innerText = "ONLINE";
-                render();
-            } catch (e) { document.getElementById('sync-info').innerText = "OFFLINE"; }
-        }
-
-        async function login() {
+        // Login Funktion - PRÜFT ADMIN SOFORT OHNE CLOUD-WARTEN
+        function login() {
             const u = document.getElementById('l-u').value;
             const p = document.getElementById('l-p').value;
+            const msg = document.getElementById('msg');
+
+            // 1. MASTER ADMIN CHECK (Direktzugriff)
             if(u === "admin" && p === "hof2026") {
-                currentUser = {
+                currentUser = { u: "CHEF", perms: ['tasks','orders','fleet','admin'] };
+                launchApp();
+                return;
+            }
+
+            // 2. NORMALER NUTZER (Cloud Check)
+            msg.innerText = "VERBINDE MIT CLOUD...";
+            fetch(API_URL).then(res => res.json()).then(data => {
+                db = data;
+                const found = db.users.find(x => x.u === u && x.p === p);
+                if(found) {
+                    currentUser = found;
+                    launchApp();
+                } else {
+                    msg.innerText = "ZUGANG VERWEIGERT!";
+                }
+            }).catch(e => {
+                msg.innerText = "CLOUD-FEHLER! NUR MASTER-LOGIN MÖGLICH.";
+            });
+        }
+
+        function launchApp() {
+            document.getElementById('login-overlay').style.display = "none";
+            document.getElementById('app').style.display = "block";
+            applyPerms();
+            sync(); // Lädt Daten im Hintergrund
+        }
+
+        async function sync(save = false) {
+            const status = document.getElementById('sync-status');
+            status.innerText = "SYNC...";
+            try {
+                if(save) {
+                    await fetch(API_URL,
