@@ -3,34 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HofBuch Pro-X 2026</title>
+    <title>HofBuch Pro-X 2.0</title>
     <style>
         :root {
-            --bg: #0a0b0d; --card: #16191f; --text: #ffffff; --text-dim: #8a8d91;
-            --primary: #5eb82d; --accent: #fbc02d; --danger: #ff4d4d; --nav: #000000;
+            --bg: #0f1115; --card: #1c1f26; --text: #ffffff; --text-dim: #a0a6b0;
+            --primary: #5eb82d; --accent: #fbc02d; --border: #2d323d; --nav: #000000;
         }
         [data-theme="light"] {
-            --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; --text-dim: #65676b;
-            --primary: #2d6a4f; --accent: #d4a373; --danger: #dc3545; --nav: #ffffff;
+            --bg: #f4f7f6; --card: #ffffff; --text: #1a1d21; --text-dim: #606770;
+            --primary: #2d6a4f; --accent: #d4a373; --border: #dce1e5; --nav: #ffffff;
         }
 
-        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: background 0.3s, color 0.3s; }
         
         /* LOGIN */
         #login-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .login-box { background: var(--card); padding: 40px; border-radius: 12px; width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .login-box { background: var(--card); padding: 40px; border-radius: 8px; width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid var(--border); }
         
-        /* LAYOUT */
-        header { background: var(--nav); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 25px; }
-        
-        /* CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid rgba(128,128,128,0.1); transition: 0.3s; position: relative; }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card-img { width: 100%; height: 200px; object-fit: contain; background: #000; }
-        .card-body { padding: 20px; }
-        
-        /* DASHBOARD */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-        .kachel { background: var(--card); padding: 40px 20px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: bold; border: 1px solid rgba(128,128,128,0
+        /* HEADER & NAV */
+        header { background: var(--nav); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* GRID SYSTEM */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: var(--card); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: transform 0.2s; }
+        .card:hover { border-color: var(--primary); }
+        .card-img { width: 100%; height: 180px; object-fit: contain; background: #000; display: block; }
+        .card-body { padding: 15px; }
+
+        /* DASHBOARD KACHELN */
+        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .kachel { background: var(--card); padding: 25px 10px; text-align: center; cursor: pointer; border-radius: 4px; border: 1px solid var(--border); font-weight: bold; transition: 0.2s; }
+        .kachel:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+        .kachel i { font-size: 30px; display: block; margin-bottom: 10px; font-style: normal; }
+
+        /* BUTTONS & INPUTS */
+        input, textarea, select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 4px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; }
+        .btn-sm { padding: 8px 12px; font-size: 11px; width: auto; background: var(--border); color: var(--text); border: none; cursor: pointer; border-radius: 3px; margin: 2px; }
+        .btn-theme { background: var(--primary); color: white; border-radius: 20px; padding: 5px 15px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
+
+        .section { display: none; }
+        .active { display: block; }
+        .admin-area { border: 1px solid var(--accent); padding: 15px; margin-bottom: 20px; background: rgba(251, 192, 45, 0.05); }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="color: var(--primary); margin:0;">HOFBUCH OS</h2>
+            <p style="color: var(--text-dim); font-size: 12px; margin-bottom: 25px;">ZENTRALE STEUERUNG 2026</p>
+            <input type="text" id="l-u" placeholder="BENUTZER">
+            <input type="password" id="l-p" placeholder="PASSWORT">
+            <button class="btn" onclick="tryLogin()">LOGIN</button>
+            <p id="l-err" style="color: var(--accent); font-size: 11px; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <div id="app" style="display:none;">
+        <header>
+            <div onclick="go('dash')" style="cursor:pointer; font-weight:bold; letter-spacing:1px;">🚜 HOFBUCH PRO</div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <button class="btn-theme" onclick="toggleTheme()" id="theme-btn">☀️ LIGHT MODE</button>
+                <button onclick="location.reload()" class="btn-sm" style="background:red; color:white;">LOGOUT</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <div id="dash" class="section active">
+                <h3 style="border-left: 4px solid var(--primary); padding-left: 10px;">HAUPTMENÜ</h3>
+                <div class="dash-grid">
+                    <div id="k-tasks" class
