@@ -3,207 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HofBuch OS - LS25 Stable</title>
+    <title>HofBuch OS - LS25 Cloud Edition</title>
     <style>
-        :root { --ls-bg: #08090a; --ls-card: #12151a; --ls-green: #5eb82d; --ls-text: #ffffff; --ls-dim: #888; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--ls-bg); color: var(--ls-text); margin: 0; padding: 0; }
+        :root { 
+            --ls-bg: #0a0b0d; --ls-card: #16191f; --ls-green: #5eb82d; 
+            --ls-accent: #fbc02d; --text: #ffffff; --text-dim: #8a8d91;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--ls-bg); margin: 0; color: var(--text); overflow-x: hidden; }
         
-        /* LOGIN - ABSOLUTE PRIORITÄT */
-        #login-overlay { height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; background: #000; position: fixed; z-index: 9999; }
-        .login-box { background: var(--ls-card); padding: 40px; border-radius: 2px; width: 280px; border-bottom: 5px solid var(--ls-green); text-align: center; }
+        /* LOGIN */
+        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1c1f26, #0a0b0d); position: fixed; width:100%; z-index:2000; }
+        .login-box { background: var(--ls-card); padding: 40px; border-radius: 4px; width: 300px; text-align: center; border-bottom: 4px solid var(--ls-green); }
         
-        header { background: #000; padding: 15px; border-bottom: 2px solid var(--ls-green); display: flex; justify-content: space-between; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        /* HEADER */
+        header { background: #000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ls-green); position: sticky; top: 0; z-index: 1000; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* GRID & CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .ls-card { background: var(--ls-card); border: 1px solid #2a2e38; transition: 0.2s; position: relative; }
+        .ls-card:hover { border-color: var(--ls-green); }
+        .ls-img-box { width: 100%; height: 200px; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .ls-img { width: 100%; height: 100%; object-fit: contain; }
+        .ls-content { padding: 20px; }
+        .ls-brand { color: var(--ls-green); font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .ls-title { font-size: 1.4rem; font-weight: 900; font-style: italic; text-transform: uppercase; margin-bottom: 15px; }
         
-        /* LS25 SHOP STYLE */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .ls-card { background: var(--ls-card); border: 1px solid #222; overflow: hidden; position: relative; }
-        .ls-img { width: 100%; height: 160px; background: #000; object-fit: contain; }
-        .ls-info { padding: 15px; }
-        .ls-brand { color: var(--ls-green); font-size: 10px; font-weight: bold; }
-        .ls-title { font-size: 1.2rem; font-weight: 900; font-style: italic; margin-bottom: 10px; text-transform: uppercase; }
-        
+        .ls-stats { background: #0a0b0d; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; border-radius: 2px; }
+        .stat-label { color: var(--text-dim); }
+
         /* DASHBOARD */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        .kachel { background: var(--ls-card); padding: 25px 10px; text-align: center; cursor: pointer; border: 1px solid #333; font-weight: bold; }
-        .kachel:hover { background: var(--ls-green); color: #000; }
-        
-        input, textarea { background: #1a1e24; border: 1px solid #333; color: #fff; padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        .btn { background: var(--ls-green); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; }
-        .btn-small { padding: 5px 10px; background: #333; color: #fff; border: none; cursor: pointer; font-size: 11px; margin-top: 5px; }
+        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; }
+        .kachel { background: var(--ls-card); padding: 35px 10px; text-align: center; cursor: pointer; border: 1px solid #2a2e38; font-weight: bold; transition: 0.2s; }
+        .kachel:hover { background: var(--ls-green); color: #000; transform: scale(1.02); }
+        .kachel i { font-size: 40px; display: block; margin-bottom: 15px; font-style: normal; }
+
+        /* UI ELEMENTS */
+        input, textarea { background: #1c1f26; border: 1px solid #333; color: white; padding: 12px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: var(--ls-green); outline: none; }
+        .btn { background: var(--ls-green); color: #000; border: none; padding: 15px; font-weight: 900; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 15px; }
+        .btn-sm { padding: 8px 15px; font-size: 12px; width: auto; background: #2a2e38; color: white; border: none; cursor: pointer; margin-right: 5px; }
+        .btn-sm:hover { background: var(--ls-green); color: #000; }
         
         .section { display: none; }
         .active { display: block; }
-        .admin-box { border: 1px solid #fbc02d; padding: 15px; margin-bottom: 20px; background: rgba(251, 192, 45, 0.05); }
+        .admin-panel { border: 1px solid var(--ls-accent); padding: 20px; margin-bottom: 30px; background: rgba(251, 192, 45, 0.03); border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <div id="login-overlay">
+    <div id="login-overlay" class="login-screen">
         <div class="login-box">
-            <h1 style="color: var(--ls-green); font-style: italic; margin: 0 0 20px 0;">HOFBUCH OS</h1>
-            <input type="text" id="user" placeholder="BENUTZER">
-            <input type="password" id="pass" placeholder="PASSWORT">
-            <button class="btn" onclick="checkLogin()">LOGIN</button>
-            <p id="err" style="color: #fbc02d; font-size: 11px; margin-top: 10px;"></p>
+            <h1 style="color: var(--ls-green); font-style: italic; margin:0; font-size: 2.5rem;">HOFBUCH</h1>
+            <p style="color: var(--text-dim); font-size: 10px; letter-spacing: 4px; margin-bottom: 30px;">SYSTEM 2026 ONLINE</p>
+            <input type="text" id="l-u" placeholder="BENUTZERNAME">
+            <input type="password" id="l-p" placeholder="PASSWORT">
+            <button class="btn" onclick="performLogin()">SYSTEM STARTEN</button>
+            <p id="msg" style="color:var(--ls-accent); font-size: 11px; margin-top: 15px;"></p>
         </div>
     </div>
 
     <div id="app" style="display:none;">
         <header>
-            <div onclick="go('dash')" style="cursor:pointer; font-weight:900;">🚜 HOFBUCH OS</div>
-            <button onclick="location.reload()" style="background:none; border:1px solid #444; color:#fff; font-size:10px;">EXIT</button>
-        </header>
-
-        <div class="container">
-            <div id="dash" class="section active">
-                <h2 style="font-style:italic; border-left:4px solid var(--ls-green); padding-left:10px;">MENÜ</h2>
-                <div class="dash-grid">
-                    <div id="k-tasks" class="kachel" onclick="go('tasks')">AUFGABEN</div>
-                    <div id="k-orders" class="kachel" onclick="go('orders')">SHOP</div>
-                    <div id="k-fleet" class="kachel" onclick="go('fleet')">FUHRPARK</div>
-                    <div id="k-staff" class="kachel" onclick="go('staff')">TEAM</div>
-                </div>
-            </div>
-
-            <div id="fleet" class="section">
-                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
-                <div id="fleet-admin" class="admin-box" style="display:none;">
-                    <h3>NEUE MASCHINE</h3>
-                    <input type="text" id="fn" placeholder="Name">
-                    <input type="text" id="fi" placeholder="Kennzeichen">
-                    <input type="text" id="fh" placeholder="Stunden">
-                    <input type="text" id="fimg" placeholder="Bild-URL">
-                    <button class="btn" onclick="addF()">SPEICHERN</button>
-                </div>
-                <div class="grid" id="fleet-list"></div>
-            </div>
-
-            <div id="tasks" class="section">
-                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
-                <div id="task-admin" class="admin-box" style="display:none;">
-                    <h3>AUFTRAG GEBEN</h3>
-                    <input type="text" id="tm" placeholder="Maschine">
-                    <input type="text" id="td" placeholder="Was ist zu tun?">
-                    <button class="btn" onclick="addT()">SENDEN</button>
-                </div>
-                <div id="task-list"></div>
-            </div>
-
-            <div id="staff" class="section">
-                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
-                <div class="admin-box">
-                    <h3>NUTZER</h3>
-                    <input type="text" id="nu" placeholder="Name">
-                    <input type="password" id="np" placeholder="Passwort">
-                    <button class="btn" onclick="addU()">ERSTELLEN</button>
-                </div>
-                <div id="staff-list"></div>
-            </div>
-            
-            <div id="orders" class="section">
-                <button class="btn-small" onclick="go('dash')">← ZURÜCK</button>
-                <div class="admin-box"><h3>SHOPLISTE</h3><input type="text" id="oi" placeholder="Teil"><button class="btn" onclick="addO()">MELDEN</button></div>
-                <div id="order-list"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const API = "https://api.npoint.io/ee2e847bca4c396d9025";
-        let db = { users: [], tasks: [], orders: [], fleet: [] };
-        let user = null;
-
-        // LOGIN - FUNKTIONIERT IMMER SOFORT
-        function checkLogin() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-
-            if(u === "admin" && p === "hof2026") {
-                user = { u: "CHEF", perms: ['tasks','orders','fleet','admin'] };
-                start();
-            } else {
-                // Versuche Cloud-Login
-                fetch(API).then(r => r.json()).then(d => {
-                    db = d;
-                    const f = db.users.find(x => x.u === u && x.p === p);
-                    if(f) { user = f; start(); }
-                    else { document.getElementById('err').innerText = "FALSCH!"; }
-                }).catch(() => { document.getElementById('err').innerText = "OFFLINE!"; });
-            }
-        }
-
-        function start() {
-            document.getElementById('login-overlay').style.display = "none";
-            document.getElementById('app').style.display = "block";
-            // Kacheln zeigen
-            const p = user.perms || [];
-            document.getElementById('k-tasks').style.display = p.includes('tasks') ? "block" : "none";
-            document.getElementById('k-orders').style.display = p.includes('orders') ? "block" : "none";
-            document.getElementById('k-fleet').style.display = p.includes('fleet') ? "block" : "none";
-            document.getElementById('k-staff').style.display = p.includes('admin') ? "block" : "none";
-            if(p.includes('admin')) {
-                document.getElementById('fleet-admin').style.display = "block";
-                document.getElementById('task-admin').style.display = "block";
-            }
-            sync();
-        }
-
-        async function sync(save = false) {
-            try {
-                if(save) {
-                    await fetch(API, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db) });
-                } else {
-                    const r = await fetch(API);
-                    const d = await r.json();
-                    if(d) db = d;
-                }
-                render();
-            } catch (e) { console.log("Cloud-Fehler ignoriert."); }
-        }
-
-        function go(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        // AKTIONEN
-        function addF() {
-            if(!db.fleet) db.fleet = [];
-            db.fleet.push({ n: document.getElementById('fn').value, id: document.getElementById('fi').value, h: document.getElementById('fh').value, img: document.getElementById('fimg').value });
-            sync(true);
-        }
-        function addT() {
-            if(!db.tasks) db.tasks = [];
-            db.tasks.push({ m: document.getElementById('tm').value, d: document.getElementById('td').value, by: user.u });
-            sync(true);
-        }
-        function addU() {
-            if(!db.users) db.users = [];
-            db.users.push({ u: document.getElementById('nu').value, p: document.getElementById('np').value, perms: ['tasks','orders','fleet'] });
-            sync(true);
-        }
-        function addO() {
-            if(!db.orders) db.orders = [];
-            db.orders.push({ i: document.getElementById('oi').value, u: user.u });
-            sync(true);
-        }
-
-        function render() {
-            const fl = document.getElementById('fleet-list');
-            fl.innerHTML = (db.fleet || []).map((f, i) => `
-                <div class="ls-card">
-                    <img src="${f.img || 'https://via.placeholder.com/300x150/111/5eb82d?text=MASCHINE'}" class="ls-img">
-                    <div class="ls-info">
-                        <div class="ls-brand">EQUIPMENT</div>
-                        <div class="ls-title">${f.n}</div>
-                        <div style="font-size:12px; color:var(--ls-dim)">ID: ${f.id} | ${f.h} H</div>
-                        <button class="btn-small" onclick="const h=prompt('H:'); if(h){db.fleet[${i}].h=h;sync(true);}">STUNDEN</button>
-                        ${user.perms.includes('admin') ? `<button class="btn-small" style="background:red" onclick="db.fleet.splice(${i},1);sync(true)">X</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-
-            document.getElementById('task-list').innerHTML = (db.tasks || []).map((t, i) => `
-                <div class="ls-card" style="padding:10px; margin-bottom:5px; border-left:4px solid var(--ls-green)">
-                    <b>${t.m}</b>: ${t.d} <button class="btn-small" style="float:right" onclick="db.tasks.splice(${i},1);sync(true)">OK
+            <div onclick="go('dash')" style="cursor:pointer; font-weight:bold; letter-spacing:1px; font-style:italic;">🚜 HOFBUCH OS <span id="sync-status" style="color:var(--ls-green
