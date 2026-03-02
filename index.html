@@ -3,125 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HofBuch Cloud Pro 2026</title>
+    <title>HofBuch Pro Cloud</title>
     <style>
-        :root { --green: #2d6a4f; --dark: #1b4332; --light: #f8f9fa; --accent: #d4a373; --red: #e63946; }
+        :root { --green: #2d6a4f; --dark: #1b4332; --light: #f8f9fa; --accent: #d4a373; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; color: #333; }
         
-        /* LOGIN */
-        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--green), var(--dark)); position: fixed; width: 100%; z-index: 1000; }
-        .login-box { background: white; padding: 40px; border-radius: 15px; width: 300px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        /* UI ELEMENTE */
+        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--dark); position: fixed; width: 100%; z-index: 1000; }
+        .login-box { background: white; padding: 30px; border-radius: 15px; width: 300px; text-align: center; }
+        #app { display: none; }
+        .header { background: var(--dark); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        /* APP LAYOUT */
-        #app { display: none; min-height: 100vh; }
-        .header { background: var(--dark); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        /* DASHBOARD */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .kachel { background: white; padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--green); display: none; }
         
-        /* DASHBOARD KACHELN */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
-        .kachel { background: white; padding: 25px 15px; border-radius: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s; border-bottom: 4px solid var(--green); }
-        .kachel:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        .kachel i { font-size: 30px; display: block; margin-bottom: 10px; }
+        /* FORMULARE */
+        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 6px; }
+        .perm-box { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; font-size: 13px; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--green); color: white; }
         
-        /* FORMULAR & CARDS */
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
-        .btn-main { background: var(--green); color: white; }
-        .btn-back { background: #666; color: white; margin-bottom: 15px; width: auto; padding: 8px 15px; }
-        
-        .section { display: none; animation: fadeIn 0.3s; }
+        .section { display: none; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .admin-only { border-left: 5px solid var(--accent); }
-        .user-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
-        .group-tag { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #555; }
+        .badge { background: #eee; padding: 3px 7px; border-radius: 4px; font-size: 11px; margin-left: 5px; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay" class="login-screen">
         <div class="login-box">
-            <h1 style="margin:0;">🚜 HofBuch</h1>
-            <p>Betriebs-Cloud 2026</p>
+            <h2>🚜 HofBuch Login</h2>
             <input type="text" id="l-u" placeholder="Name">
             <input type="password" id="l-p" placeholder="Passwort">
-            <button class="btn btn-main" onclick="login()">Anmelden</button>
-            <p id="msg" style="color:red; font-size:12px; margin-top:10px;"></p>
+            <button class="btn" onclick="login()">Anmelden</button>
+            <p id="msg" style="color:red;"></p>
         </div>
     </div>
 
     <div id="app">
         <div class="header">
-            <div style="font-weight:bold; font-size:18px;" onclick="go('dash')">🚜 HofBuch <span id="sync-icon" style="font-size:12px; font-weight:normal; margin-left:10px;"></span></div>
-            <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; border-radius:5px; padding:4px 10px; cursor:pointer;">Abmelden</button>
+            <b onclick="go('dash')">🚜 HofBuch <span id="sync-info" style="font-weight:normal; font-size:10px;"></span></b>
+            <button onclick="location.reload()" style="color:white; background:none; border:1px solid white; border-radius:4px;">Logout</button>
         </div>
 
         <div class="container">
-            
             <div id="dash" class="section active">
-                <h2 id="welcome">Willkommen</h2>
+                <h2 id="welcome">Hallo!</h2>
                 <div class="grid">
-                    <div class="kachel" onclick="go('tasks')"><i>🛠️</i>Aufgaben</div>
-                    <div class="kachel" onclick="go('orders')"><i>🛒</i>Bestellung</div>
-                    <div class="kachel" onclick="go('fleet')"><i>🚜</i>Fuhrpark</div>
-                    <div class="kachel admin-only-ui" onclick="go('staff')"><i>👥</i>Personal</div>
+                    <div id="k-tasks" class="kachel" onclick="go('tasks')"><i>🛠️</i><br>Aufgaben</div>
+                    <div id="k-orders" class="kachel" onclick="go('orders')"><i>🛒</i><br>Bestellung</div>
+                    <div id="k-fleet" class="kachel" onclick="go('fleet')"><i>🚜</i><br>Fuhrpark</div>
+                    <div id="k-staff" class="kachel" onclick="go('staff')"><i>👥</i><br>Personal</div>
                 </div>
             </div>
 
             <div id="staff" class="section">
-                <button class="btn btn-back" onclick="go('dash')">← Zurück</button>
-                <h2>Personal & Gruppen</h2>
+                <button onclick="go('dash')" style="margin-bottom:10px;">← Zurück</button>
                 <div class="card">
-                    <h3>Neuen Mitarbeiter anlegen</h3>
-                    <input type="text" id="new-u" placeholder="Name">
-                    <input type="password" id="new-p" placeholder="Passwort">
-                    <input type="text" id="new-g" placeholder="Gruppe (z.B. Ernte, Werkstatt, Gruppe A)">
-                    <select id="new-r">
-                        <option value="worker">Mitarbeiter</option>
-                        <option value="admin">Administrator</option>
-                    </select>
-                    <button class="btn btn-main" onclick="addUser()">Account erstellen</button>
+                    <h3>👤 Mitarbeiter & Rechte</h3>
+                    <input type="text" id="n-u" placeholder="Name">
+                    <input type="password" id="n-p" placeholder="Passwort">
+                    <input type="text" id="n-g" placeholder="Gruppe (z.B. Ernte)">
+                    
+                    <p style="font-size:12px; margin-bottom:5px;"><b>Berechtigungen:</b></p>
+                    <div class="perm-box">
+                        <label><input type="checkbox" id="p-tasks"> Aufgaben</label>
+                        <label><input type="checkbox" id="p-orders"> Bestellungen</label>
+                        <label><input type="checkbox" id="p-fleet"> Fuhrpark</label>
+                        <label><input type="checkbox" id="p-admin"> Admin-Rechte</label>
+                    </div>
+                    <button class="btn" onclick="addUser()">Nutzer erstellen</button>
                 </div>
-                <div class="card">
-                    <h3>Mitarbeiterliste</h3>
-                    <div id="staff-list"></div>
-                </div>
+                <div id="staff-list"></div>
             </div>
 
             <div id="tasks" class="section">
-                <button class="btn btn-back" onclick="go('dash')">← Zurück</button>
-                <h2>Aktuelle Aufgaben</h2>
-                <div class="card admin-only-ui">
-                    <h3>Aufgabe zuweisen</h3>
-                    <input type="text" id="t-m" placeholder="Fahrzeug/Maschine">
+                <button onclick="go('dash')" style="margin-bottom:10px;">← Zurück</button>
+                <div class="card" id="admin-task-input" style="display:none;">
+                    <h3>🛠️ Neue Aufgabe</h3>
+                    <input type="text" id="t-m" placeholder="Maschine">
                     <input type="text" id="t-d" placeholder="Was ist zu tun?">
-                    <button class="btn btn-main" onclick="addTask()">Zuweisen</button>
+                    <input type="text" id="t-g" placeholder="Für Gruppe (leer lassen = für alle)">
+                    <button class="btn" onclick="addTask()">Zuweisen</button>
                 </div>
                 <div id="task-list"></div>
             </div>
 
             <div id="orders" class="section">
-                <button class="btn btn-back" onclick="go('dash')">← Zurück</button>
-                <h2>Ersatzteil-Bestellungen</h2>
-                <div class="card">
-                    <input type="text" id="o-i" placeholder="Was wird benötigt?">
-                    <button class="btn btn-main" style="background:var(--accent)" onclick="addOrder()">Teil anfordern</button>
-                </div>
-                <div id="order-list"></div>
+                <button onclick="go('dash')">← Zurück</button>
+                <div class="card"><h3>🛒 Bestellliste</h3><input type="text" id="o-i" placeholder="Teil anfordern"><button class="btn" onclick="addOrder()">Eintragen</button><div id="order-list"></div></div>
             </div>
-
-            <div id="fleet" class="section">
-                <button class="btn btn-back" onclick="go('dash')">← Zurück</button>
-                <h2>Fuhrparkübersicht</h2>
-                <div class="card admin-only-ui">
-                    <input type="text" id="f-n" placeholder="Maschinenname">
-                    <button class="btn btn-main" onclick="addFleet()">Maschine hinzufügen</button>
-                </div>
-                <div id="fleet-list"></div>
-            </div>
-
+            <div id="fleet" class="section"><button onclick="go('dash')">← Zurück</button><h3>🚜 Fuhrpark</h3><div id="fleet-list"></div></div>
         </div>
     </div>
 
@@ -130,116 +104,79 @@
         let db = { users: [], tasks: [], orders: [], fleet: [] };
         let currentUser = null;
 
-        async function sync(isSaving = false) {
-            const icon = document.getElementById('sync-icon');
-            icon.innerText = "☁️...";
-            try {
-                if(isSaving) {
-                    await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db) });
-                } else {
-                    const res = await fetch(API_URL);
-                    db = await res.json();
-                }
-                icon.innerText = "✅";
-                render();
-            } catch(e) { icon.innerText = "❌ Offline"; }
+        async function sync(save = false) {
+            document.getElementById('sync-info').innerText = "☁️...";
+            if(save) {
+                await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db) });
+            } else {
+                const res = await fetch(API_URL);
+                db = await res.json();
+            }
+            document.getElementById('sync-info').innerText = "✅";
+            render();
         }
 
         async function login() {
-            const uInput = document.getElementById('l-u').value;
-            const pInput = document.getElementById('l-p').value;
+            const u = document.getElementById('l-u').value;
+            const p = document.getElementById('l-p').value;
             await sync();
 
-            // Notfall-Login für ersten Start
-            if(uInput === "admin" && pInput === "hof2026") {
-                currentUser = { u: "admin", r: "admin" };
-            } else {
-                currentUser = db.users.find(x => x.u === uInput && x.p === pInput);
-            }
+            let user = (u === "admin" && p === "hof2026") ? {u:"admin", r:"admin", perms:['tasks','orders','fleet','admin']} : db.users.find(x => x.u === u && x.p === p);
 
-            if(currentUser) {
+            if(user) {
+                currentUser = user;
                 document.getElementById('login-overlay').style.display = "none";
                 document.getElementById('app').style.display = "block";
-                document.getElementById('welcome').innerText = `Hallo, ${currentUser.u}!`;
-                if(currentUser.r !== 'admin') {
-                    document.querySelectorAll('.admin-only-ui').forEach(el => el.style.display = 'none');
-                }
-            } else {
-                document.getElementById('msg').innerText = "Login falsch!";
+                setupDashboard(user);
+            } else { alert("Login falsch!"); }
+        }
+
+        function setupDashboard(user) {
+            // Zeige Kacheln basierend auf Rechten
+            if(user.perms.includes('tasks')) document.getElementById('k-tasks').style.display = "block";
+            if(user.perms.includes('orders')) document.getElementById('k-orders').style.display = "block";
+            if(user.perms.includes('fleet')) document.getElementById('k-fleet').style.display = "block";
+            if(user.perms.includes('admin')) {
+                document.getElementById('k-staff').style.display = "block";
+                document.getElementById('admin-task-input').style.display = "block";
             }
         }
 
         function go(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            sync(); // Bei jedem Seitenwechsel kurz aktualisieren
+            sync();
         }
 
         function addUser() {
-            const u = document.getElementById('new-u').value;
-            const p = document.getElementById('new-p').value;
-            const g = document.getElementById('new-g').value || "Keine Gruppe";
-            const r = document.getElementById('new-r').value;
-            if(u && p) {
-                db.users.push({u, p, r, g});
-                sync(true);
-                alert("Erstellt!");
-            }
+            const perms = [];
+            if(document.getElementById('p-tasks').checked) perms.push('tasks');
+            if(document.getElementById('p-orders').checked) perms.push('orders');
+            if(document.getElementById('p-fleet').checked) perms.push('fleet');
+            if(document.getElementById('p-admin').checked) perms.push('admin');
+
+            db.users.push({
+                u: document.getElementById('n-u').value,
+                p: document.getElementById('n-p').value,
+                g: document.getElementById('n-g').value || "Allgemein",
+                perms: perms
+            });
+            sync(true);
         }
 
         function addTask() {
-            const v = document.getElementById('t-m').value;
-            const d = document.getElementById('t-d').value;
-            if(v && d) { db.tasks.push({v, d}); sync(true); }
+            db.tasks.push({ v: document.getElementById('t-m').value, d: document.getElementById('t-d').value, g: document.getElementById('t-g').value });
+            sync(true);
         }
 
         function addOrder() {
-            const i = document.getElementById('o-i').value;
-            if(i) { db.orders.push({i, u: currentUser.u}); sync(true); }
-        }
-
-        function addFleet() {
-            const n = document.getElementById('f-n').value;
-            if(n) { db.fleet.push({n}); sync(true); }
+            db.orders.push({ i: document.getElementById('o-i').value, u: currentUser.u });
+            sync(true);
         }
 
         function render() {
-            // Personal
-            const sl = document.getElementById('staff-list');
-            sl.innerHTML = db.users.map((u, i) => `
-                <div class="user-row">
-                    <span><b>${u.u}</b> <span class="group-tag">${u.g}</span></span>
-                    ${currentUser.r === 'admin' ? `<button onclick="db.users.splice(${i},1);sync(true)" style="color:red">Löschen</button>` : ''}
-                </div>
-            `).join('');
-
-            // Aufgaben
+            // Aufgaben Filterung: Zeige nur Aufgaben für die eigene Gruppe oder "alle"
             const tl = document.getElementById('task-list');
-            tl.innerHTML = db.tasks.map((t, i) => `
-                <div class="card">
-                    <b>${t.v}</b>: ${t.d}
-                    <button class="btn btn-main" style="margin-top:10px; padding:5px;" onclick="db.tasks.splice(${i},1);sync(true)">✓ Erledigt</button>
-                </div>
-            `).join('');
-
-            // Bestellungen
-            const ol = document.getElementById('order-list');
-            ol.innerHTML = db.orders.map((o, i) => `
-                <div class="user-row">
-                    <span>${o.i} <small>(von ${o.u})</small></span>
-                    ${currentUser.r === 'admin' ? `<button onclick="db.orders.splice(${i},1);sync(true)">Erledigt</button>` : ''}
-                </div>
-            `).join('');
-
-            // Fuhrpark
-            const fl = document.getElementById('fleet-list');
-            fl.innerHTML = db.fleet.map((f, i) => `
-                <div class="user-row">
-                    <span>🚜 ${f.n}</span>
-                    ${currentUser.r === 'admin' ? `<button onclick="db.fleet.splice(${i},1);sync(true)">X</button>` : ''}
-                </div>
-            `).join('');
-        }
-    </script>
-</body>
-</html>
+            tl.innerHTML = "";
+            db.tasks.filter(t => !t.g || t.g === currentUser.g || currentUser.perms.includes('admin')).forEach((t, i) => {
+                tl.innerHTML += `<div class="card"><b>${t.v}</b>: ${t.d} <span class="badge">${t.g || 'Alle'}</span><br>
