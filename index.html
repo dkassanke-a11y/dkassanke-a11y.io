@@ -3,82 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HofBuch Pro - Ultra Stable</title>
+    <title>HofBuch OS - LS25 Edition</title>
     <style>
-        :root { --green: #2d6a4f; --dark: #1b4332; --light: #f8f9fa; }
-        body { font-family: sans-serif; background: var(--light); margin: 0; }
-        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--dark); position: fixed; width:100%; z-index:1000; }
-        .login-box { background: white; padding: 30px; border-radius: 12px; width: 280px; text-align: center; }
-        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; background: var(--green); color: white; margin-top: 10px; }
-        #app { display: none; }
-        .header { background: var(--dark); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .kachel { background: white; padding: 20px; text-align: center; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-bottom: 3px solid var(--green); display: none; }
-        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid var(--green); }
+        :root { 
+            --ls-dark: #121417; --ls-card: #1c1f26; --ls-green: #5eb82d; 
+            --ls-accent: #fbc02d; --text: #ffffff; --text-dim: #a0a0a0;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--ls-dark); margin: 0; color: var(--text); }
+        
+        /* LOGIN */
+        .login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #2c3e50, #121417); position: fixed; width:100%; z-index:2000; }
+        .login-box { background: var(--ls-card); padding: 40px; border-radius: 10px; width: 320px; text-align: center; border-top: 4px solid var(--ls-green); }
+        
+        header { background: #000; padding: 15px 25px; display: flex; justify-content: space-between; border-bottom: 2px solid var(--ls-green); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+        /* LS25 SHOP GRID */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        
+        /* FAHRZEUG KARTE (SHOP LOOK) */
+        .ls-card { background: var(--ls-card); border-radius: 5px; overflow: hidden; position: relative; transition: 0.2s; border: 1px solid #333; }
+        .ls-card:hover { border-color: var(--ls-green); transform: translateY(-3px); }
+        .ls-img { width: 100%; height: 180px; background: #2a2e38; object-fit: cover; border-bottom: 2px solid var(--ls-green); }
+        .ls-content { padding: 15px; }
+        .ls-title { font-size: 1.2rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .ls-brand { color: var(--ls-green); font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
+        
+        .ls-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #121417; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 13px; }
+        .stat-label { color: var(--text-dim); }
+        
+        /* DASHBOARD KACHELN */
+        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .kachel { background: var(--ls-card); padding: 30px 10px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #333; display: none; }
+        .kachel:hover { background: var(--ls-green); color: black; }
+        .kachel i { font-size: 40px; display: block; margin-bottom: 10px; }
+
+        /* INPUTS */
+        input, textarea { background: #2a2e38; border: 1px solid #444; color: white; padding: 12px; border-radius: 4px; width: 100%; box-sizing: border-box; margin: 5px 0; }
+        .btn { background: var(--ls-green); color: black; border: none; padding: 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-mini { padding: 5px 10px; font-size: 11px; width: auto; background: var(--ls-accent); margin-right: 5px; }
+        
         .section { display: none; }
         .active { display: block; }
+        .admin-only { border: 1px dashed var(--ls-accent); padding: 15px; margin-bottom: 20px; border-radius: 5px; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay" class="login-screen">
         <div class="login-box">
-            <h2>🚜 HofBuch Pro</h2>
-            <input type="text" id="l-u" placeholder="Benutzername">
-            <input type="password" id="l-p" placeholder="Passwort">
-            <button class="btn" id="login-btn" onclick="login()">Anmelden</button>
-            <p id="msg" style="color:red; font-size: 12px; margin-top:10px;"></p>
+            <h1 style="color: var(--ls-green); letter-spacing: 2px;">HOFBUCH OS</h1>
+            <p style="color: var(--text-dim);">ENTER SYSTEM</p>
+            <input type="text" id="l-u" placeholder="USER">
+            <input type="password" id="l-p" placeholder="PASSWORD">
+            <button class="btn" onclick="login()">LOGIN</button>
+            <p id="msg" style="color:red;"></p>
         </div>
     </div>
 
-    <div id="app">
-        <div class="header">
-            <b onclick="go('dash')">🚜 HofBuch <span id="sync-info" style="font-size:10px;"></span></b>
-            <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; padding:4px; border-radius:4px;">Logout</button>
-        </div>
+    <div id="app" style="display:none;">
+        <header>
+            <div onclick="go('dash')" style="cursor:pointer; font-weight:bold;">🚜 HOFBUCH <span id="sync-info" style="color:var(--ls-green); font-size:10px;"></span></div>
+            <button onclick="location.reload()" style="background:none; border:1px solid #444; color:white; padding:4px 10px; border-radius:4px; cursor:pointer;">EXIT</button>
+        </header>
+
         <div class="container">
             <div id="dash" class="section active">
-                <h3 id="welcome">Hallo</h3>
-                <div class="grid">
-                    <div id="k-tasks" class="kachel" onclick="go('tasks')">🛠️<br>Aufgaben</div>
-                    <div id="k-orders" class="kachel" onclick="go('orders')">🛒<br>Bestellung</div>
-                    <div id="k-fleet" class="kachel" onclick="go('fleet')">🚜<br>Fuhrpark</div>
-                    <div id="k-staff" class="kachel" onclick="go('staff')">👥<br>Personal</div>
+                <h2 id="welcome">DASHBOARD</h2>
+                <div class="dash-grid">
+                    <div id="k-tasks" class="kachel" onclick="go('tasks')"><i>🛠️</i>AUFGABEN</div>
+                    <div id="k-orders" class="kachel" onclick="go('orders')"><i>🛒</i>SHOP</div>
+                    <div id="k-fleet" class="kachel" onclick="go('fleet')"><i>🚜</i>FUHRPARK</div>
+                    <div id="k-staff" class="kachel" onclick="go('staff')"><i>👥</i>TEAM</div>
                 </div>
             </div>
 
-            <div id="staff" class="section">
-                <button onclick="go('dash')">← Zurück</button>
-                <div class="card">
-                    <h4>Nutzerverwaltung</h4>
-                    <input type="text" id="n-u" placeholder="Name">
-                    <input type="password" id="n-p" placeholder="Passwort">
-                    <input type="text" id="n-g" placeholder="Gruppe">
-                    <div style="background:#eee; padding:10px; border-radius:8px; margin:10px 0; font-size:12px;">
-                        <label><input type="checkbox" id="p-tasks" checked> Aufgaben</label><br>
-                        <label><input type="checkbox" id="p-orders" checked> Bestellung</label><br>
-                        <label><input type="checkbox" id="p-fleet"> Fuhrpark</label><br>
-                        <label><input type="checkbox" id="p-admin"> Admin (Vollzugriff)</label>
-                    </div>
-                    <button class="btn" onclick="addUser()">Nutzer speichern</button>
+            <div id="fleet" class="section">
+                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
+                
+                <div id="fleet-admin" class="admin-only" style="display:none;">
+                    <h3 style="color:var(--ls-accent);">MASCHINE HINZUFÜGEN</h3>
+                    <input type="text" id="f-n" placeholder="Name (z.B. Fendt 724 Vario)">
+                    <input type="text" id="f-id" placeholder="Kennzeichen">
+                    <input type="text" id="f-h" placeholder="Stunden">
+                    <input type="text" id="f-img" placeholder="Bild-URL (Link zum Bild)">
+                    <textarea id="f-w" placeholder="Wartungs-Informationen"></textarea>
+                    <button class="btn" onclick="addFleet()">SPEICHERN</button>
                 </div>
-                <div id="staff-list"></div>
+
+                <div class="grid" id="fleet-list"></div>
             </div>
 
             <div id="tasks" class="section">
-                <button onclick="go('dash')">← Zurück</button>
-                <div id="admin-t-input" class="card" style="display:none;">
-                    <input type="text" id="t-m" placeholder="Maschine">
-                    <input type="text" id="t-d" placeholder="Aufgabe">
-                    <button class="btn" onclick="addTask()">Zuweisen</button>
+                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
+                <div id="task-admin" class="admin-only" style="display:none;">
+                    <h3>NEUER AUFTRAG</h3>
+                    <input type="text" id="t-m" placeholder="Maschine/Bereich">
+                    <input type="text" id="t-d" placeholder="Beschreibung">
+                    <button class="btn" onclick="addTask()">ZOWEISEN</button>
                 </div>
                 <div id="task-list"></div>
             </div>
-            
-            <div id="orders" class="section"><button onclick="go('dash')">← Zurück</button><h3>Bestellliste</h3><div id="order-list"></div></div>
-            <div id="fleet" class="section"><button onclick="go('dash')">← Zurück</button><h3>Fuhrpark</h3><div id="fleet-list"></div></div>
+
+            <div id="orders" class="section">
+                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
+                <div class="admin-only">
+                    <h3>BESTELLLISTE</h3>
+                    <input type="text" id="o-i" placeholder="Teil/Produkt">
+                    <button class="btn" onclick="addOrder()">MELDEN</button>
+                </div>
+                <div id="order-list"></div>
+            </div>
+
+            <div id="staff" class="section">
+                <button class="btn" style="width:auto; margin-bottom:20px;" onclick="go('dash')">← ZURÜCK</button>
+                <div class="admin-only">
+                    <h3>PERSONALVERWALTUNG</h3>
+                    <input type="text" id="n-u" placeholder="Name">
+                    <input type="password" id="n-p" placeholder="Passwort">
+                    <div style="font-size:12px; margin:10px 0;">
+                        <label><input type="checkbox" id="p-tasks" checked> AUFGABEN</label>
+                        <label><input type="checkbox" id="p-orders" checked> SHOP</label>
+                        <label><input type="checkbox" id="p-fleet" checked> FUHRPARK</label>
+                        <label><input type="checkbox" id="p-admin"> ADMIN</label>
+                    </div>
+                    <button class="btn" onclick="addUser()">NUTZER ERSTELLEN</button>
+                </div>
+                <div id="staff-list"></div>
+            </div>
         </div>
     </div>
 
@@ -87,101 +139,22 @@
         let db = { users: [], tasks: [], orders: [], fleet: [] };
         let currentUser = null;
 
-        // VERBESSERTER SYNC (Stürzt nicht ab wenn Cloud leer)
         async function sync(save = false) {
-            const info = document.getElementById('sync-info');
-            info.innerText = "☁️...";
+            document.getElementById('sync-info').innerText = "•";
             try {
                 if(save) {
                     await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(db) });
                 } else {
                     const res = await fetch(API_URL);
-                    const rawData = await res.json();
-                    // Validierung: Nur wenn es ein Objekt mit 'users' ist, übernehmen
-                    if(rawData && typeof rawData === 'object') {
-                        db = {
-                            users: rawData.users || [],
-                            tasks: rawData.tasks || [],
-                            orders: rawData.orders || [],
-                            fleet: rawData.fleet || []
-                        };
-                    }
+                    db = await res.json();
                 }
-                info.innerText = "✅";
+                document.getElementById('sync-info').innerText = "ONLINE";
                 render();
-            } catch (e) { 
-                info.innerText = "⚠️ Cloud leer/offline"; 
-                console.log("Sync Info:", e);
-            }
+            } catch (e) { document.getElementById('sync-info').innerText = "OFFLINE"; }
         }
 
         async function login() {
             const u = document.getElementById('l-u').value;
             const p = document.getElementById('l-p').value;
-            const msg = document.getElementById('msg');
-            msg.innerText = "Prüfe...";
-
-            // 1. MASTER LOGIN (Immer möglich!)
             if(u === "admin" && p === "hof2026") {
-                currentUser = { u: "Master", perms: ['tasks','orders','fleet','admin'], g: "Admin" };
-            } 
-            else {
-                // 2. CLOUD LOGIN (Nur wenn Master nicht greift)
-                await sync();
-                const found = db.users.find(x => x.u === u && x.p === p);
-                if(found) currentUser = found;
-            }
-
-            if(currentUser) {
-                document.getElementById('login-overlay').style.display = "none";
-                document.getElementById('app').style.display = "block";
-                document.getElementById('welcome').innerText = "Hallo " + currentUser.u;
-                applyPermissions();
-                sync(); // Erstmalig Daten laden
-            } else {
-                msg.innerText = "Login fehlgeschlagen!";
-            }
-        }
-
-        function applyPermissions() {
-            const perms = currentUser.perms || [];
-            document.getElementById('k-tasks').style.display = perms.includes('tasks') ? "block" : "none";
-            document.getElementById('k-orders').style.display = perms.includes('orders') ? "block" : "none";
-            document.getElementById('k-fleet').style.display = perms.includes('fleet') ? "block" : "none";
-            document.getElementById('k-staff').style.display = perms.includes('admin') ? "block" : "none";
-            document.getElementById('admin-t-input').style.display = perms.includes('admin') ? "block" : "none";
-        }
-
-        function go(id) {
-            if(id === 'staff' && !currentUser.perms.includes('admin')) return;
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            render();
-        }
-
-        function addUser() {
-            const p = [];
-            if(document.getElementById('p-tasks').checked) p.push('tasks');
-            if(document.getElementById('p-orders').checked) p.push('orders');
-            if(document.getElementById('p-fleet').checked) p.push('fleet');
-            if(document.getElementById('p-admin').checked) p.push('admin');
-            
-            db.users.push({ u: document.getElementById('n-u').value, p: document.getElementById('n-p').value, g: document.getElementById('n-g').value, perms: p });
-            sync(true);
-        }
-
-        function addTask() {
-            db.tasks.push({ m: document.getElementById('t-m').value, d: document.getElementById('t-d').value });
-            sync(true);
-        }
-
-        function render() {
-            const sl = document.getElementById('staff-list');
-            if(sl) sl.innerHTML = db.users.map((u, i) => `<div class="card"><b>${u.u}</b> (${u.g}) <button onclick="db.users.splice(${i},1);sync(true)" style="float:right">X</button></div>`).join('');
-            
-            const tl = document.getElementById('task-list');
-            if(tl) tl.innerHTML = db.tasks.map((t, i) => `<div class="card"><b>${t.m}</b>: ${t.d} <button onclick="db.tasks.splice(${i},1);sync(true)" style="float:right">✓</button></div>`).join('');
-        }
-    </script>
-</body>
-</html>
+                currentUser = {
